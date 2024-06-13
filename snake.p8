@@ -447,6 +447,7 @@ function draw_game()
 	drwfood()
 	--score
 	local score=tostr(game.score)
+  poke2(0x5004,game.score)
 	local scoretxt="\*"..4-#score.."0"..score
 	?"\^w\^t"..scoretxt,4,5,7
 	--pwtimer
@@ -532,6 +533,10 @@ function drwfood()
 	for f in all(food) do
 		if (not f.show) return
 		local x,y=getpos(f,f.val==2 and -4)
+    -- output state (food position)
+    poke(0x5002,x)
+    poke(0x5003,y)
+    --
 		local n=f.n==1 and 32 or f.n*2+29
 		spr(n,x,y,f.val,1)
 	end
@@ -558,6 +563,11 @@ function drwsnek()
 	local nh=dir.y==0 and 17 or 21
 	for i,s in ipairs(snek) do
 		local x,y=getpos(s)
+    -- output state (x and y position)
+    poke(0x5000,tostr(x))
+    poke(0x5001,tostr(y))
+    serial(0x807,0x5000,8)
+    --
 		if i==1 then --head
 			local nx,ny=getpos(s,-dir.x*4,-dir.y*4)
 			local m=16

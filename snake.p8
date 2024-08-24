@@ -447,7 +447,9 @@ function draw_game()
 	drwfood()
 	--score
 	local score=tostr(game.score)
+  -- put score into game state buffer
   poke2(0x5004,game.score)
+  --
 	local scoretxt="\*"..4-#score.."0"..score
 	?"\^w\^t"..scoretxt,4,5,7
 	--pwtimer
@@ -533,7 +535,7 @@ function drwfood()
 	for f in all(food) do
 		if (not f.show) return
 		local x,y=getpos(f,f.val==2 and -4)
-    -- output state (food position)
+    -- put food position into game state buffer
     poke(0x5002,x)
     poke(0x5003,y)
     --
@@ -563,9 +565,10 @@ function drwsnek()
 	local nh=dir.y==0 and 17 or 21
 	for i,s in ipairs(snek) do
 		local x,y=getpos(s)
-    -- output state (x and y position)
-    poke(0x5000,tostr(x))
-    poke(0x5001,tostr(y))
+    -- put snake head into game state buffer 
+    poke(0x5000,x)
+    poke(0x5001,y)
+    -- send game state buffer to stdout
     serial(0x807,0x5000,8)
     --
 		if i==1 then --head
